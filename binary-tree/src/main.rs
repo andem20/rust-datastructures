@@ -7,7 +7,7 @@ fn main() {
 
     let binary_tree = BinaryTree::from_array(&array);
 
-    println!("{:?}", binary_tree);
+    println!("{:?}", array);
     println!("\n\n");
     println!("{}", binary_tree);
 }
