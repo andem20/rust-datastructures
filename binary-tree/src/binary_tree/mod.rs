@@ -67,9 +67,22 @@ impl<T> BinaryTree<T> {
         }
     }
 
+    fn max_depth(node: Option<&Box<Node<T>>>) -> usize {
+        return match node {
+            Some(some_node) => {
+                let left_depth = Self::max_depth(some_node.left.as_ref());
+                let right_depth = Self::max_depth(some_node.right.as_ref());
+
+                left_depth.max(right_depth) + 1
+            }
+            None => 0,
+        };
+    }
+
     fn breadth_first_traversal<'a>(
         current: Option<&'a Box<Node<T>>>,
         result: &mut Vec<Option<&'a T>>,
+        max_depth: usize,
     ) where
         T: Debug,
     {
@@ -77,7 +90,7 @@ impl<T> BinaryTree<T> {
 
         queue.insert(0, current);
 
-        let max_depth = 2_i32.pow(6);
+        let max_depth = 2_i32.pow(max_depth as u32);
         let mut i = 0;
 
         while let Some(element) = queue.pop() {
@@ -116,15 +129,17 @@ impl<T> BinaryTree<T> {
 impl<T: std::fmt::Debug + Display> Display for BinaryTree<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let _ = f;
-        let max_depth = 6;
+        let max_depth = Self::max_depth(self.root.as_ref());
         let fill = " ";
-        let width = 3;
+        let width = 2;
         let last_row_amount = 2_usize.pow((max_depth - 1) as u32);
         let max_width = last_row_amount * width + last_row_amount;
 
         let mut result: Vec<Option<&T>> = Vec::new();
 
-        Self::breadth_first_traversal(self.root.as_ref(), &mut result);
+        println!("Max depth: {max_depth}");
+
+        Self::breadth_first_traversal(self.root.as_ref(), &mut result, max_depth);
 
         let mut i = 0;
         let mut x = 1;
@@ -173,15 +188,3 @@ impl<T: std::fmt::Debug + Display> Display for BinaryTree<T> {
         Ok(())
     }
 }
-
-//
-//             12
-//            /  \
-//           3   22
-//          / \
-//            4
-//           / \
-//              5
-//             / \
-//                9
-//
